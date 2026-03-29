@@ -1,6 +1,7 @@
 package com.avelis.backend.domain;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,16 +17,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Builder
+@Data
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
@@ -48,6 +49,30 @@ public class User {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private String passwordHash;
+
+	@Column(name = "last_name", nullable = false)
+	private String lastName;
+
+	@Column(name = "first_name", nullable = false)
+	private String firstName;
+
+	@Column(name = "middle_name")
+	private String middleName;
+
+	@Column
+	private LocalDate birthday;
+
+	@Column
+	private String city;
+
+	@Column
+	private String timezone;
+
+	@Column(name = "avatar_url")
+	private String avatarUrl;
+
+	@Column(name = "cover_url")
+	private String coverUrl;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
