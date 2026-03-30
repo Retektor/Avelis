@@ -1,5 +1,8 @@
 package com.avelis.backend.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,21 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public User createUser(CreateUserRequest req) {
+		if (req == null) {
+			throw new IllegalArgumentException("Запрос пуст");
+		}
+		List<String> missing = new ArrayList<>();
+	    if (isBlank(req.getEmail())) missing.add("электронная почта");
+	    if (isBlank(req.getPhone())) missing.add("телефон");
+	    if (isBlank(req.getFirstName())) missing.add("имя");
+	    if (isBlank(req.getLastName())) missing.add("фамилия");
+	    if (isBlank(req.getPassword())) missing.add("пароль");
+	    if (isBlank(req.getConfirmPassword())) missing.add("подтверждение пароля");
+	    
+	    if (!missing.isEmpty()) {
+	        throw new IllegalArgumentException("Не заполнены обязательные поля: " + String.join(", ", missing));
+	    }
+		
 		passwordValidator.validate(req.getPassword(), req.getConfirmPassword());
 		
 		String hashedPassword = passwordEncoder.encode(req.password);
@@ -57,6 +75,9 @@ public class UserServiceImpl implements UserService {
 //	public void deleteUserById(Long userId);
 	
 	private UserRole parseUserRole(String stringRole) {
+		if (stringRole == null) {
+			throw new IllegalArgumentException("Роль пользователя пуста");
+		}
 		String upperString = stringRole.toUpperCase();
 		return switch (upperString) {
 				case "STUDENT" -> UserRole.STUDENT;
@@ -64,5 +85,9 @@ public class UserServiceImpl implements UserService {
 				case "PARENT" -> UserRole.PARENT;
 				default -> throw new IllegalArgumentException("Неизвестная роль пользователя");
 		};
+	}
+	
+	private boolean isBlank(String s) {
+	    return s == null || s.trim().isEmpty();
 	}
 }

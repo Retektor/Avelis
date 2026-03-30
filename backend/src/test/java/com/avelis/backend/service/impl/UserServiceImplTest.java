@@ -2,6 +2,8 @@ package com.avelis.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,6 +79,26 @@ class UserServiceImplTest {
         assertEquals(UserRole.STUDENT, passed.getRole());
         assertEquals(testReq.getPhone(), passed.getPhone());
         assertEquals("hashed", passed.getPasswordHash());
+    }
+    
+    @Test
+    void createUser_throwsExceptionWhenFieldsAreNull() {
+    	CreateUserRequest nullReq = CreateUserRequest.builder()
+				.email(null)
+				.phone(null)
+				.lastName(null)
+				.firstName(null)
+				.password(null)
+				.confirmPassword(null)
+				.stringRole(null)
+				.build();
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            underTest.createUser(nullReq);
+        });
+
+        assertNotNull(ex.getMessage());
+        assertTrue(ex.getMessage().toLowerCase().contains("почта") || ex.getMessage().toLowerCase().contains("поля"));
     }
 }
 
