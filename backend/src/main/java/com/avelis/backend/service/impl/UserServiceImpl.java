@@ -2,6 +2,7 @@ package com.avelis.backend.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,12 @@ public class UserServiceImpl implements UserService {
 		return repo.save(user);
 	}
 
-//	public Optional<User> findUserByEmail(String email);
+	public Optional<User> findUserByEmail(String email) {
+		if (email == null) {
+			throw new IllegalArgumentException("Почта не введена");
+		}
+		return repo.findByEmail(email);
+	}
 	
 //	public Optional<User> findUserByPhone(String phone);
 	
