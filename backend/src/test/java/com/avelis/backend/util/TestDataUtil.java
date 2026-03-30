@@ -9,7 +9,7 @@ public class TestDataUtil {
 		LocalDate birthday = LocalDate.now();
 		return CreateUserRequest.builder()
 				.email("JohnDoe@example.com")
-				.phone("+71234567890")
+				.phone("71234567890")
 				.lastName("Doe")
 				.firstName("John")
 				.middleName("Julius")

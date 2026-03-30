@@ -10,7 +10,7 @@ public interface UserService {
 
 	Optional<User> findUserByEmail(String email);
 
-//	Optional<User> findUserByPhone(String phone);
+	Optional<User> findUserByPhone(String phone);
 
 //	User updateUser(UpdateUserRequest req);
 

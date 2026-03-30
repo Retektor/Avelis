@@ -50,10 +50,10 @@ public class UserServiceImpl implements UserService {
 		UserRole role = parseUserRole(req.getStringRole());
 		
 		User user = User.builder()
-				.email(req.getEmail())
-				.phone(req.getPhone())
-				.lastName(req.getLastName())
-				.firstName(req.getLastName())
+				.email(req.getEmail().strip())
+				.phone(req.getPhone().strip())
+				.lastName(req.getLastName().strip())
+				.firstName(req.getLastName().strip())
 				.middleName(req.getMiddleName())
 				.birthday(req.getBirthday())
 				.passwordHash(hashedPassword)
@@ -74,7 +74,17 @@ public class UserServiceImpl implements UserService {
 		return repo.findByEmail(email);
 	}
 	
-//	public Optional<User> findUserByPhone(String phone);
+	public Optional<User> findUserByPhone(String phone) {
+		if (phone == null) {
+			throw new IllegalArgumentException("Почта не введена");
+		}
+//		Удаление +, если он там есть
+		if (phone.charAt(0) == '+') {
+			phone = phone.substring(1);
+		}
+		
+		return repo.findByPhone(phone);
+	}
 	
 //	public User updateUser(UpdateUserRequest req);
 	
@@ -94,6 +104,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	private boolean isBlank(String s) {
-	    return s == null || s.trim().isEmpty();
+	    return s == null || s.strip().isEmpty();
 	}
 }

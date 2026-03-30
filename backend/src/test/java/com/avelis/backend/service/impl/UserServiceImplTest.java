@@ -53,7 +53,7 @@ class UserServiceImplTest {
         User saved = User.builder()
         		.userId(1L)
 				.email("JohnDoe@example.com")
-				.phone("+71234567890")
+				.phone("71234567890")
 				.lastName("Doe")
 				.firstName("John")
 				.middleName("Julius")
@@ -112,7 +112,7 @@ class UserServiceImplTest {
         User saved = User.builder()
         		.userId(1L)
 				.email("JohnDoe@example.com")
-				.phone("+71234567890")
+				.phone("71234567890")
 				.lastName("Doe")
 				.firstName("John")
 				.middleName("Julius")
@@ -122,7 +122,6 @@ class UserServiceImplTest {
 				.build();
         
         
-        // Настройка моков
         when(repo.findByEmail("JohnDoe@example.com")).thenReturn(Optional.of(saved));
 
         Optional<User> result = underTest.findUserByEmail("JohnDoe@example.com");
@@ -148,6 +147,83 @@ class UserServiceImplTest {
     void findUserByEmail_throwsExceptionWhenOtherValues() {
     	IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
             underTest.findUserByEmail(null);
+        });
+
+        assertNotNull(ex.getMessage());
+    }
+    
+    @Test
+    void findUserByPhone_returnsUser() {
+        CreateUserRequest testReq = TestDataUtil.createUserRequest();
+        LocalDate birthday = LocalDate.now();
+        
+        User saved = User.builder()
+        		.userId(1L)
+				.email("JohnDoe@example.com")
+				.phone("71234567890")
+				.lastName("Doe")
+				.firstName("John")
+				.middleName("Julius")
+				.birthday(birthday)
+				.passwordHash("hashed")
+				.role(UserRole.STUDENT)
+				.build();
+        
+        
+        when(repo.findByPhone("71234567890")).thenReturn(Optional.of(saved));
+
+        Optional<User> result = underTest.findUserByPhone("71234567890");
+        
+        assertTrue(result.isPresent());
+        assertEquals(saved.getUserId(), result.get().getUserId());
+        assertEquals(saved.getPhone(), result.get().getPhone());	
+
+        verify(repo).findByPhone("71234567890");
+    }
+    
+    @Test
+    void findUserByPhone_trimsPlusSign() {
+        CreateUserRequest testReq = TestDataUtil.createUserRequest();
+        LocalDate birthday = LocalDate.now();
+        
+        User saved = User.builder()
+        		.userId(1L)
+				.email("JohnDoe@example.com")
+				.phone("71234567890")
+				.lastName("Doe")
+				.firstName("John")
+				.middleName("Julius")
+				.birthday(birthday)
+				.passwordHash("hashed")
+				.role(UserRole.STUDENT)
+				.build();
+        
+        
+        when(repo.findByPhone("71234567890")).thenReturn(Optional.of(saved));
+
+        Optional<User> result = underTest.findUserByPhone("+71234567890");
+        
+        assertTrue(result.isPresent());
+        assertEquals(saved.getUserId(), result.get().getUserId());
+        assertEquals(saved.getPhone(), result.get().getPhone());	
+
+        verify(repo).findByPhone("71234567890");
+    }
+    
+    @Test
+    void findUserByPhone_returnsEmptyWhenNotFound() {
+    	when(repo.findByPhone(anyString())).thenReturn(Optional.empty());
+    	
+    	Optional<User> result = underTest.findUserByPhone("71234567890");
+    	
+    	assertTrue(result.isEmpty());
+    	verify(repo, times(1)).findByPhone("71234567890");
+    }
+    
+    @Test
+    void findUserByPhone_throwsExceptionWhenOtherValues() {
+    	IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            underTest.findUserByPhone(null);
         });
 
         assertNotNull(ex.getMessage());
