@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.avelis.backend.domain.User;
 import com.avelis.backend.domain.UserRole;
 import com.avelis.backend.dto.CreateUserRequest;
+import com.avelis.backend.dto.UpdateUserRequest;
 import com.avelis.backend.repositories.UserRepository;
 import com.avelis.backend.util.TestDataUtil;
 
@@ -227,6 +228,58 @@ class UserServiceImplTest {
         });
 
         assertNotNull(ex.getMessage());
+    }
+    
+    @Test
+    void updateUser_returnsUpdatedUser() {
+    	LocalDate birthday = LocalDate.now();
+    	
+    	User existing = User.builder()
+                .userId(1L)
+                .email("JohnDoe@example.com")
+                .phone("71234567890")
+                .lastName("OldLast")
+                .firstName("OldFirst")
+                .middleName("OldMiddle")
+                .birthday(birthday)
+                .passwordHash("hashed")
+                .role(UserRole.STUDENT)
+                .build();
+    	
+    	User saved = User.builder()
+                .userId(1L)
+                .email("JohnDoe@example.com")
+                .phone("71234567890")
+                .lastName("Updated")
+                .firstName("Updated")
+                .middleName("Updated")
+                .birthday(birthday)
+                .passwordHash("hashed")
+                .role(UserRole.STUDENT)
+                .build();
+
+    	
+    	when(repo.findById(1L)).thenReturn(Optional.of(existing));
+        when(repo.save(any(User.class))).thenReturn(saved);
+    	
+    	UpdateUserRequest req = UpdateUserRequest.builder()
+    			.userId(1L)
+    			.lastName("Updated")
+    			.firstName("Updated")
+    			.middleName("Updated")
+    			.build();
+    	
+    	User result = underTest.updateUser(req);
+    	
+        assertEquals(1L, result.getUserId());
+        assertEquals("Updated", result.getLastName());
+        assertEquals("Updated", result.getFirstName());
+        assertEquals("Updated", result.getMiddleName());
+        assertEquals("JohnDoe@example.com", result.getEmail());
+        assertEquals("71234567890", result.getPhone());
+
+        verify(repo).findById(1L);
+        verify(repo).save(any(User.class));
     }
 }
 

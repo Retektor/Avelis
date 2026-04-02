@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import com.avelis.backend.domain.User;
 import com.avelis.backend.dto.CreateUserRequest;
+import com.avelis.backend.dto.UpdateUserRequest;
+
 
 public interface UserService {
 	User createUser(CreateUserRequest req);
@@ -12,7 +14,7 @@ public interface UserService {
 
 	Optional<User> findUserByPhone(String phone);
 
-//	User updateUser(UpdateUserRequest req);
+	User updateUser(UpdateUserRequest req);
 
 //	void deleteUserById(Long userId);
 }

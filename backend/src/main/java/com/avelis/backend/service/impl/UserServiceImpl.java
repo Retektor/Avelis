@@ -10,9 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.avelis.backend.domain.User;
 import com.avelis.backend.domain.UserRole;
 import com.avelis.backend.dto.CreateUserRequest;
+import com.avelis.backend.dto.UpdateUserRequest;
 import com.avelis.backend.repositories.UserRepository;
 import com.avelis.backend.service.UserService;
 import com.avelis.backend.validation.PasswordValidator;
+
+import jakarta.persistence.EntityNotFoundException;
 
 public class UserServiceImpl implements UserService {
 	private final UserRepository repo;
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService {
 		return repo.save(user);
 	}
 
+	@Override
 	public Optional<User> findUserByEmail(String email) {
 		if (email == null) {
 			throw new IllegalArgumentException("Почта не введена");
@@ -74,6 +78,7 @@ public class UserServiceImpl implements UserService {
 		return repo.findByEmail(email);
 	}
 	
+	@Override
 	public Optional<User> findUserByPhone(String phone) {
 		if (phone == null) {
 			throw new IllegalArgumentException("Почта не введена");
@@ -86,7 +91,33 @@ public class UserServiceImpl implements UserService {
 		return repo.findByPhone(phone);
 	}
 	
-//	public User updateUser(UpdateUserRequest req);
+	@Override
+	@Transactional
+	public User updateUser(UpdateUserRequest req) {
+		Long id = req.getUserId();
+		if (id == null) {
+			throw new IllegalArgumentException("Нет userId в запросе");
+		}
+		
+		Optional <User> fetchResult = repo.findById(id);
+		
+		if (fetchResult.isEmpty()) {
+			throw new EntityNotFoundException("Пользователь не найден");
+		}
+		
+		User user = fetchResult.get();
+
+		if (req.getFirstName() != null) user.setFirstName(req.getFirstName());
+        if (req.getLastName() != null) user.setLastName(req.getLastName());
+        if (req.getMiddleName() != null) user.setMiddleName(req.getMiddleName());
+        if (req.getBirthday() != null) user.setBirthday(req.getBirthday());
+        if (req.getCity() != null) user.setCity(req.getCity());
+        if (req.getTimezone() != null) user.setTimezone(req.getTimezone());
+        if (req.getAvatarUrl() != null) user.setAvatarUrl(req.getAvatarUrl());
+        if (req.getCoverUrl() != null) user.setCoverUrl(req.getCoverUrl());
+        
+		return repo.save(user);
+	}
 	
 //	public void deleteUserById(Long userId);
 	
