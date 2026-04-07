@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -280,6 +281,52 @@ class UserServiceImplTest {
 
         verify(repo).findById(1L);
         verify(repo).save(any(User.class));
+    }
+    
+    @Test
+    void deleteUser_deletesEntity() {
+    	LocalDate birthday = LocalDate.now();
+    	User saved = User.builder()
+        		.userId(1L)
+				.email("JohnDoe@example.com")
+				.phone("71234567890")
+				.lastName("Doe")
+				.firstName("John")
+				.middleName("Julius")
+				.birthday(birthday)
+				.passwordHash("hashed")
+				.role(UserRole.STUDENT)
+				.build();
+    	
+    	when(repo.findById(saved.getUserId())).thenReturn(Optional.of(saved));
+    	
+    	underTest.deleteUserById(saved.getUserId());
+    	
+    	verify(repo, times(1)).findById(saved.getUserId());
+    	verify(repo, times(1)).delete(saved);
+    }
+    
+    @Test
+    void deleteUser_incorrectDataIgnored() {
+    	LocalDate birthday = LocalDate.now();
+    	User saved = User.builder()
+        		.userId(1L)
+				.email("JohnDoe@example.com")
+				.phone("71234567890")
+				.lastName("Doe")
+				.firstName("John")
+				.middleName("Julius")
+				.birthday(birthday)
+				.passwordHash("hashed")
+				.role(UserRole.STUDENT)
+				.build();
+    	
+    	when(repo.findById(any(Long.class))).thenReturn(Optional.empty());
+    	
+    	underTest.deleteUserById(999L);
+    	
+    	verify(repo, times(1)).findById(999L);
+    	verify(repo, never()).delete(saved);
     }
 }
 

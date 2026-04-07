@@ -119,7 +119,14 @@ public class UserServiceImpl implements UserService {
 		return repo.save(user);
 	}
 	
-//	public void deleteUserById(Long userId);
+	@Override
+	public void deleteUserById(Long userId) {
+		Optional<User> fetchResult = repo.findById(userId);
+		if (fetchResult.isPresent()) {
+			User user = fetchResult.get();
+			repo.delete(user);
+		}
+	}
 	
 	private UserRole parseUserRole(String stringRole) {
 		if (stringRole == null) {
