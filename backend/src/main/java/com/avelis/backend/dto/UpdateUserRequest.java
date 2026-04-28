@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UpdateUserRequest {
-	private Long userId;
+	public Long userId;
 //	Обновление электронной почты будет осуществляться через отдельную функцию
 //	Обновление телефона будет осуществляться через отдельную функцию
 //	Обновление пароля будет осуществляться через отдельную функцию
-	private String lastName;
-	private String firstName;
-	private String middleName;
-	private LocalDate birthday;
-	private String city;
-	private String timezone;
-	private String avatarUrl;
-	private String coverUrl;
+	public String lastName;
+	public String firstName;
+	public String middleName;
+	public LocalDate birthday;
+	public String city;
+	public String timezone;
+	public String avatarUrl;
+	public String coverUrl;
 }

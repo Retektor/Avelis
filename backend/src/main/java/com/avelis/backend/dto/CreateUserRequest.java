@@ -16,9 +16,9 @@ public class CreateUserRequest {
 	public LocalDate birthday;
 	public String password;
 	public String confirmPassword;
-	private String city;
-	private String timezone;
-	private String avatarUrl;
-	private String coverUrl;
-	private String stringRole;
+	public String city;
+	public String timezone;
+	public String avatarUrl;
+	public String coverUrl;
+	public String stringRole;
 }
